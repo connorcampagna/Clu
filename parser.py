@@ -40,10 +40,31 @@ class Parser:
                         func.add_instruction(instr)
                     i += 1
                 program.add_function(func)
+
+            elif cmd == "repeat":
+                var = parts[1]
+                op = parts[2]
+                value = parts[3]
+                repeat_body = []
+                i += 1
+                while i < len(lines):
+                    parts_inside = lines[i].strip().split()
+                    if not parts_inside:
+                        i += 1
+                        continue
+                    if parts_inside[0].lower() == "end":
+                        break
+                    instr = self.parse_line(" ".join(parts_inside))
+                    if instr:
+                        repeat_body.append(instr)
+                    i += 1
+                program.add_instruction(Instruction("repeat_block", (var, op, value, repeat_body)))
+
             else:
                 instr = self.parse_line(" ".join(parts))
                 if instr:
                     program.add_instruction(instr)
+
             i += 1
 
         return program
@@ -72,9 +93,16 @@ class Parser:
         if cmd == "otherwise":
             return Instruction("otherwise", ())
 
+        if cmd == "loop":
+            return Instruction("loop", (parts[1], parts[2], parts[3]))
+
         if cmd == "end":
             return Instruction("end", ())
 
-        # If none of the above, treat as a function call
+        # No repeat here anymore!
+
+        # Default: treat as function call
         return Instruction("call", tuple(parts))
+
+
 

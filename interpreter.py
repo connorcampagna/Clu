@@ -75,6 +75,22 @@ class Interpreter:
             if self.execution_stack:
                 self.execution_stack.pop()
 
+
+        elif action == "repeat_block":
+            var, op, value, body = args
+            while True:
+                try:
+                    result = self.evaluate_condition(var, op, value)
+                except Exception as e:
+                    print(f"Error in repeat condition: {e}")
+                    break
+
+                if not result:
+                    break
+
+                for inner_instr in body:
+                    self.execute_instruction(inner_instr)
+
         elif action == "call":
             func_name = args[0]
             call_args = args[1:]
@@ -103,7 +119,6 @@ class Interpreter:
             print(f"Unknown command: {args[0]}")
 
     def evaluate_expression(self, parts):
-        # same as before
         if len(parts) == 1:
             try:
                 return int(parts[0])
@@ -111,28 +126,47 @@ class Interpreter:
                 if parts[0] in self.variables:
                     return self.variables[parts[0]]
                 raise ValueError(f"Unknown variable or value '{parts[0]}'")
+
         if len(parts) == 3:
             a, op, b = parts
-            if a not in self.variables or b not in self.variables:
-                raise ValueError(f"Unknown variables '{a}' or '{b}'")
+            if a not in self.variables:
+                raise ValueError(f"Unknown variable '{a}'")
+            try:
+                b_val = int(b)
+            except ValueError:
+                if b in self.variables:
+                    b_val = self.variables[b]
+                else:
+                    raise ValueError(f"Unknown variable '{b}'")
+
             if op == "add":
-                return self.variables[a] + self.variables[b]
+                return self.variables[a] + b_val
             if op == "subtract":
-                return self.variables[a] - self.variables[b]
+                return self.variables[a] - b_val
             if op == "multiply":
-                return self.variables[a] * self.variables[b]
+                return self.variables[a] * b_val
             if op == "divide":
-                if self.variables[b] == 0:
+                if b_val == 0:
                     raise ZeroDivisionError("Division by zero")
-                return self.variables[a] // self.variables[b]
+                return self.variables[a] // b_val
+
         raise ValueError(f"Invalid expression: {' '.join(parts)}")
 
     def evaluate_condition(self, var1, op, var2):
+        # Get left-hand side
         v1 = self.variables.get(var1)
-        v2 = self.variables.get(var2)
-        if v1 is None or v2 is None:
-            raise ValueError("Unknown variables in condition")
+        if v1 is None:
+            raise ValueError(f"Unknown variable '{var1}' in condition")
 
+        # Handle right-hand side: maybe a constant or maybe a variable
+        try:
+            v2 = int(var2)  # try to parse var2 as an integer (like 5)
+        except ValueError:
+            v2 = self.variables.get(var2)
+            if v2 is None:
+                raise ValueError(f"Unknown variable or value '{var2}' in condition")
+
+        # Now do the comparison
         if op == "greater":
             return v1 > v2
         if op == "less":
@@ -143,4 +177,5 @@ class Interpreter:
             return v1 >= v2
         if op == "less_equal":
             return v1 <= v2
+
         raise ValueError(f"Unknown operator '{op}' in condition")
