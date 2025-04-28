@@ -1,3 +1,9 @@
+
+![Language](https://img.shields.io/badge/language-CLU-blueviolet)
+![Status](https://img.shields.io/badge/status-Experimental-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Made with](https://img.shields.io/badge/made%20with-Python-blue)
+
 # CLU Language - Documentation (Draft v1.0)
 
 ---
