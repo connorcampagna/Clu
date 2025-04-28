@@ -10,7 +10,7 @@
 
 ## Introduction
 
-CLU is a small, custom-designed programming language created for educational and experimental purposes.  
+CLU is a small, custom-designed programming language created for educational,experimental and entertainment purposes.  
 It supports:
 - Variables and math operations
 - Conditionals (`if`, `otherwise`, `end`)
