@@ -27,26 +27,9 @@
 | **Integer addition**     | `var s is 2 add 3`                                  |
 | **Char concatenation**   | `var t is 'a' + 'b'`                                |
 | **List literal**         | `var nums is 2,4,6,8`                               |
-| **Conditionals**         | 
-if x greater 3
-    output 'big'
-otherwise
-    output 'small'
-end
-``` |
-| **Loops**                | ```clu
-var i is 0
-repeat i less 5
-    output i
-    var i is i add 1
-end
-``` |
-| **Functions**            | ```clu
-function sum_to_n -> n
-    …  
-end
-sum_to_n 10
-``` |
+| **Conditionals**         | 'if x greater 3 otherwise``` |
+| **Loops**                | ```clu repeat i less 5 ``` |
+| **Functions**            | ```clu function sum_to_n -> n  ``` |
 | **Comments**             | `# this is a comment`                               |
 
 ---
