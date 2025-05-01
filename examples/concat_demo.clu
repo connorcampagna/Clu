@@ -1,0 +1,26 @@
+# === concat_demo.clu ===
+
+# 1) Simple string concatenation chaining
+var part1 is 'Hello'
+var part2 is ', '
+var part3 is 'world'
+var part4 is '!'
+var greeting is part1 + part2 + part3 + part4
+output greeting        # → Hello, world!
+
+# 2) Numeric addition chaining
+var total is 1 add 2 add 3 add 4 add 5
+output total           # → 15
+
+# 3) Use chaining inside a function
+function shout -> times
+    var i is 0
+    repeat i less times
+        var msg is 'CLU is cool' + '!!!'
+        output msg
+        var i is i add 1
+    end
+end
+
+shout 3  # prints "CLU is cool!!!" three times
+

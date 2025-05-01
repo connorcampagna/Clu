@@ -1,0 +1,26 @@
+# fibonacci.clu
+
+function fibonacci -> n
+    if n equal 0
+        output 0
+    otherwise
+        if n equal 1
+            output 1
+        otherwise
+            var a is 0
+            var b is 1
+            var i is 2
+            repeat i less_equal n
+                var temp is a add b
+                var a is b
+                var b is temp
+                var i is i add 1
+            end
+            output b
+        end
+    end
+end
+
+# Print the 10th Fibonacci number (55)
+fibonacci 10
+

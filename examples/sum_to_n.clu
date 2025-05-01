@@ -1,0 +1,15 @@
+# sum_to_n.clu
+
+function sum_to_n -> n
+    var total is 0
+    var i is 1
+    repeat i less_equal n
+        var total is total add i
+        var i is i add 1
+    end
+    output total
+end
+
+# Sum 1+2+…+100 = 5050
+sum_to_n 100
+

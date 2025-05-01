@@ -1,0 +1,14 @@
+# factorial.clu
+
+function factorial -> n
+    var result is 1
+    var i is 1
+    repeat i less_equal n
+        var result is result multiply i
+        var i is i add 1
+    end
+    output result
+end
+
+factorial 6
+

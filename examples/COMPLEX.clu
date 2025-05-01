@@ -1,0 +1,101 @@
+# === Advanced CLU Demo Program ===
+
+# 1) Welcome & String (chars) concatenation with '+'
+var name is 'Connor'
+output 'Welcome, '
+output name
+output '!'
+output '---'
+
+# 2) Numeric addition chaining with 'add'
+var total is 10 add 20 add 30 add 40
+output 'Total after adds:'
+output total
+output '---'
+
+# 3) List literal demonstration
+var primes is 2,3,5,7,11,13
+output 'First primes:'
+output primes
+output '---'
+
+# 4) Iterative Factorial
+function fact -> n
+    var res is 1
+    var i is 1
+    repeat i less_equal n
+        var res is res multiply i
+        var i is i add 1
+    end
+    output 'fact('
+    output n
+    output ') ='
+    output res
+end
+
+fact 5
+output '---'
+
+# 5) Recursive GCD via Euclid’s Algorithm
+function gcd -> a/b
+    if b equal 0
+        output 'gcd('
+        output a
+        output ','
+        output b
+        output ') ='
+        output a
+    otherwise
+        var q is a divide b
+        var prod is q multiply b
+        var rem is a subtract prod
+        gcd b rem
+    end
+end
+
+gcd 270 192
+output '---'
+
+# 6) Iterative Fibonacci
+function fib -> n
+    if n equal 0
+        output 'fib(0) ='
+        output 0
+    otherwise
+        if n equal 1
+            output 'fib(1) ='
+            output 1
+        otherwise
+            var a is 0
+            var b is 1
+            var idx is 2
+            repeat idx less_equal n
+                var t is a add b
+                var a is b
+                var b is t
+                var idx is idx add 1
+            end
+            output 'fib('
+            output n
+            output ') ='
+            output b
+        end
+    end
+end
+
+fib 12
+output '---'
+
+# 7) Echo function using '+' for chars only
+function shout -> times
+    var c is 0
+    var msg is 'Hello'
+    repeat c less times
+        var exclaim is msg + '!!!'
+        output exclaim
+        var c is c add 1
+    end
+end
+
+shout 3
+
