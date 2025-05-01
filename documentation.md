@@ -22,12 +22,12 @@
 | Feature                  | Syntax example                                      |
 | ------------------------ | --------------------------------------------------- |
 | **Variable declaration** | `var x is 5`<br>`var name is 'connor'`              |
-| **Re-assignment**        | `x is x add 1`                                      |
+| **Re-assignment**        | `var x is x add 1`                                      |
 | **Output**               | `output x`<br>`output 'hello'`<br>`output 1,2,3`   |
 | **Integer addition**     | `var s is 2 add 3`                                  |
 | **Char concatenation**   | `var t is 'a' + 'b'`                                |
 | **List literal**         | `var nums is 2,4,6,8`                               |
-| **Conditionals**         | 'if x greater 3 otherwise``` |
+| **Conditionals**         | 'if x greater 3 otherwise ``` |
 | **Loops**                | ``` repeat i less 5 ``` |
 | **Functions**            | ``` function sum_to_n -> n  ``` |
 | **Comments**             | `# this is a comment`                               |
