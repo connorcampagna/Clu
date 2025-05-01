@@ -38,7 +38,7 @@ end
 var i is 0
 repeat i less 5
     output i
-    i is i add 1
+    var i is i add 1
 end
 ``` |
 | **Functions**            | ```clu
@@ -52,7 +52,7 @@ sum_to_n 10
 ---
 
 ## Example Programs
-
+```
 ### 1) Variables & Output
 ```clu
 var x is 5
@@ -98,7 +98,7 @@ end
 var i is 1
 repeat i less_equal 5
     output i
-    i is i add 1
+    var i is i add 1
 end
 # prints 1 2 3 4 5
 ```
@@ -109,8 +109,8 @@ function factorial -> n
     var res is 1
     var i is 1
     repeat i less_equal n
-        res is res multiply i
-        i is i add 1
+        var res is res multiply i
+        var i is i add 1
     end
     output res
 end
