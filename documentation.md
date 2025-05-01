@@ -4,7 +4,7 @@
 
 ### Overview
 
-**CLU** is a tiny, English-like scripting language with a minimal syntax and an easy-to-read interpreter. Every variable **must** be declared with `var`, string literals are now called **chars** (single-quoted), and you get:
+**CLU** is a English-like scripting language with a minimal syntax and an easy-to-read interpreter. Every variable **must** be declared with `var`, string literals are called **chars** (single-quoted), and you get:
 
 - integer math (`add`, `subtract`, `multiply`, `divide`)  
 - char concatenation with `+`  
@@ -28,8 +28,8 @@
 | **Char concatenation**   | `var t is 'a' + 'b'`                                |
 | **List literal**         | `var nums is 2,4,6,8`                               |
 | **Conditionals**         | 'if x greater 3 otherwise``` |
-| **Loops**                | ```clu repeat i less 5 ``` |
-| **Functions**            | ```clu function sum_to_n -> n  ``` |
+| **Loops**                | ``` repeat i less 5 ``` |
+| **Functions**            | ``` function sum_to_n -> n  ``` |
 | **Comments**             | `# this is a comment`                               |
 
 ---
