@@ -27,7 +27,7 @@
 | **Integer addition**     | `var s is 2 add 3`                                  |
 | **Char concatenation**   | `var t is 'a' + 'b'`                                |
 | **List literal**         | `var nums is 2,4,6,8`                               |
-| **Conditionals**         | ```clu
+| **Conditionals**         | 
 if x greater 3
     output 'big'
 otherwise
