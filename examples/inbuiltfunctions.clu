@@ -1,0 +1,38 @@
+# Define a list of numbers
+var nums is 5, 3, 9, 1, 6
+
+# Sum and average
+var total is sum of nums
+var avg is average of nums
+output 'Sum is:'
+output total
+output 'Average is:'
+output avg
+
+# Max value using built-in
+var biggest is max of nums
+output 'Biggest:'
+output biggest
+
+# Custom max finder using indexing
+function findBiggest -> arr/count
+    var i is 2
+    var maxVal is arr[1]
+    repeat i less_equal count
+        var current is arr[i]
+        if current greater maxVal
+            var maxVal is current
+        end
+        var i is i add 1
+    end
+    output 'Verified Max:'
+    output maxVal
+end
+
+findBiggest nums 5
+
+# Print each number with foreach
+output 'Listing numbers...'
+foreach n in nums
+    output n
+end

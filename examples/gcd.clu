@@ -1,0 +1,14 @@
+function gcd -> x/y
+    repeat x greater y
+        var x is x subtract y
+    end
+
+    repeat y greater x
+        var y is y subtract x
+    end
+
+    output x
+end
+
+
+gcd 10 20

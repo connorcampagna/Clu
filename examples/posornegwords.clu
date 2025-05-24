@@ -1,0 +1,37 @@
+# Define input (emulating tokenized sentence)
+var input is 'great', 'awesome', 'bad', 'terrible', 'okay'
+
+# Positive and negative vocab lists
+var positives is 'great', 'awesome', 'good', 'fantastic'
+var negatives is 'bad', 'terrible', 'worst', 'awful'
+
+var score is 0
+
+function wordInList -> word/list/count
+    var i is 1
+    var result is 0
+    repeat i less_equal count
+        var item is list[i]
+        if item equal word
+            var result is 1
+        end
+        var i is i add 1
+    end
+    return result
+end
+
+# Sentiment loop
+foreach w in input
+    var p is wordInList w positives 4
+    var n is wordInList w negatives 4
+
+    if p equal 1
+        var score is score add 1
+    end
+    if n equal 1
+        var score is score subtract 1
+    end
+end
+
+output 'Sentiment score:'
+output score

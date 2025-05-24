@@ -1,0 +1,8 @@
+# Basic CLU Example - Variables and Output
+var name is 'Connor'
+var age is 21
+var university is 'University of Glasgow'
+
+output 'Hello, my name is ' + name
+output 'I am ' + str of age + ' years old'
+output 'I study at ' + university

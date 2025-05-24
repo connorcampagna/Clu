@@ -1,0 +1,35 @@
+# CLU Example - Advanced Features
+var mixed_data is 'hello',42,'world',100
+
+output 'Processing mixed data:'
+foreach item in mixed_data
+    output 'Item: ' + str of item + ' (type: ' + type of item + ')'
+end
+
+# String and number conversion
+var text_numbers is '10','20','30'
+
+
+# Note: This would require list building functionality
+output 'Text numbers: ' + str of text_numbers
+
+# Working with different data types
+var text is 'CLU Language'
+var number is 2025
+var decimal is 3.14159
+
+output 'Text length: ' + str of len of text
+output 'Number as text: ' + str of number
+output 'Decimal as integer: ' + str of int of decimal
+
+# Complex calculations
+var base is 10
+var exponent is 3
+var result is base
+
+repeat exponent greater 1
+    var result is result multiply base
+    var exponent is exponent subtract 1
+end
+
+output str of base + ' cubed is ' + str of result

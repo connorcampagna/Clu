@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLU IDE</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+            border-right: 1px solid #21262d;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(20px);
+        }
+
+        .logo {
+            padding: 24px 20px;
+            border-bottom: 1px solid #21262d;
+            text-align: center;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(255, 150, 0, 0.88) 0%, rgba(255, 150, 0, 0.88) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .logo p {
+            color: #7d8590;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .section {
+            margin: 16px 0;
+        }
+
+        .section-header {
+            padding: 8px 20px;
+            color: #7d8590;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-content {
+            padding: 0 12px;
+        }
+
+        .file-list, .variable-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .file-item, .variable-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .file-item:hover, .variable-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .file-item.active {
+            background: rgba(255, 150, 0, 0.88);
+            color: white;
+        }
+
+        .file-item.new-file {
+            color: #7d8590;
+            border: 1px dashed #30363d;
+        }
+
+        .file-item.new-file:hover {
+            border-color: rgba(255, 150, 0, 0.88);
+            color: rgba(255, 150, 0, 0.88);
+        }
+
+        .variable-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .variable-name {
+            font-weight: 600;
+            color: #e6edf3;
+        }
+
+        .variable-details {
+            font-size: 11px;
+            color: #7d8590;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .examples {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .example-btn {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(255, 150, 0, 0.88) 0%, rgba(255, 150, 0, 0.88) 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .example-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+        }
+
+        .connection-status {
+            margin: 16px 12px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .connection-status.connected {
+            background: rgba(52, 199, 89, 0.15);
+            color: #34c759;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+        }
+
+        .connection-status.disconnected {
+            background: rgba(255, 59, 48, 0.15);
+            color: #ff3b30;
+            border: 1px solid rgba(255, 59, 48, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0d1117;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .file-breadcrumb {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-run {
+            background: #34c759;
+            color: white;
+        }
+
+        .btn-run:hover:not(:disabled) {
+            background: #30b855;
+            transform: translateY(-1px);
+        }
+
+        .btn-clear {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .btn-clear:hover:not(:disabled) {
+            background: #e8342a;
+            transform: translateY(-1px);
+        }
+
+        .btn-save {
+            background: #007aff;
+            color: white;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            background: #0056d6;
+            transform: translateY(-1px);
+        }
+
+        .syntax-indicator {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .syntax-indicator.valid {
+            background: rgba(52, 199, 89, 0.15);
+            color: #34c759;
+        }
+
+        .syntax-indicator.invalid {
+            background: rgba(255, 59, 48, 0.15);
+            color: #ff3b30;
+        }
+
+        /* Editor Area */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            background: #0d1117;
+        }
+
+        .line-numbers {
+             width: 60px;
+            background: #161b22;
+            color: #6e7681;
+            font-family: 'JetBrains Mono', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px 16px 20px 8px;
+            text-align: right;
+            border-right: 1px solid #21262d;
+            user-select: none;
+            overflow: hidden;
+            white-space: pre;
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .editor {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            border: none;
+            outline: none;
+            resize: none;
+            background: transparent;
+            color: transparent;
+            caret-color: #e6edf3;
+            font-family: 'JetBrains Mono', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow: auto;
+            white-space: pre;
+            position: relative;
+            z-index: 2;
+            letter-spacing: normal;
+            word-spacing: normal;
+        }
+
+        .syntax-highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 20px;
+            font-family: 'JetBrains Mono', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+            color: #e6edf3;
+        }
+
+        /* Syntax colors - GitHub Dark theme */
+        .hl-comment { color: #7d8590; font-style: italic; }
+        .hl-string { color: #a5d6ff; }
+        .hl-number { color: #79c0ff; }
+        .hl-keyword { color: #ff7b72; font-weight: 500; }
+        .hl-builtin { color: #d2a8ff; font-weight: 500; }
+        .hl-variable { color: #ffa657; font-weight: 500; }
+
+        /* Output Section */
+        .output-section {
+            height: 280px;
+            background: #161b22;
+            border-top: 1px solid #21262d;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .output-header {
+            background: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-bottom: 1px solid #21262d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .output-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .execution-status {
+            font-size: 12px;
+            font-weight: 500;
+            color: #7d8590;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .output-content {
+            flex: 1;
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', 'Menlo', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            color: #e6edf3;
+        }
+
+        .output-content.success {
+            color: #34c759;
+        }
+
+        .output-content.error {
+            color: #ff3b30;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #161b22;
+            border-top: 1px solid #21262d;
+            padding: 8px 20px;
+            font-size: 11px;
+            color: #7d8590;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(125, 133, 144, 0.3);
+            border-top: 2px solid #007aff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .sidebar {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 200px;
+                overflow-y: auto;
+            }
+
+            .output-section {
+                height: 200px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>CLU</h1>
+                <p>Educational Edition By Connor Campagna</p>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <i class="fas fa-folder"></i>
+                    Files
+                </div>
+                <div class="section-content">
+                    <div class="file-list" id="fileList">
+                        <div class="file-item new-file" onclick="newFile()">
+                            <span><i class="fas fa-plus"></i> New File</span>
+                        </div>
+                        <div class="file-item active" onclick="selectFile('main.clu')">
+                            <span><i class="fas fa-file-code"></i> main.clu</span>
+                            <i class="fas fa-times" onclick="closeFile(event, 'main.clu')"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <i class="fas fa-cube"></i>
+                    Variables
+                </div>
+                <div class="section-content">
+                    <div class="variable-list" id="variableList">
+                        <div style="color: #7d8590; text-align: center; padding: 20px; font-size: 12px;">
+                            Run code to see variables
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <i class="fas fa-play"></i>
+                    Examples
+                </div>
+                <div class="section-content">
+                    <div class="examples">
+                        <button class="example-btn" onclick="loadExample('basic')">
+                            <i class="fas fa-code"></i> Basic Syntax
+                        </button>
+                        <button class="example-btn" onclick="loadExample('lists')">
+                            <i class="fas fa-list"></i> Lists & Functions
+                        </button>
+                        <button class="example-btn" onclick="loadExample('loops')">
+                            <i class="fas fa-sync"></i> Loops & Logic
+                        </button>
+                        <button class="example-btn" onclick="loadExample('advanced')">
+                            <i class="fas fa-rocket"></i> Advanced Features
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-status" id="connectionStatus">
+                <i class="fas fa-wifi"></i>
+                <span>Checking connection...</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="file-breadcrumb">
+                    <i class="fas fa-file-code"></i>
+                    <span id="currentFileName">main.clu</span>
+                </div>
+
+                <div class="controls">
+                    <div class="syntax-indicator valid" id="syntaxIndicator">
+                        <i class="fas fa-check"></i>
+                        <span>Syntax OK</span>
+                    </div>
+                    <button class="btn btn-run" id="runBtn" onclick="runCode()">
+                        <i class="fas fa-play"></i> Run
+                    </button>
+                    <button class="btn btn-clear" onclick="clearOutput()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button class="btn btn-save" onclick="saveFile()">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </div>
+
+            <!-- Editor -->
+            <div class="editor-container">
+    <div class="line-numbers" id="lineNumbers">1</div>
+    <div class="editor-wrapper">
+        <div class="syntax-highlight" id="syntaxHighlight"></div>
+        <textarea class="editor" id="codeEditor" spellcheck="false" placeholder="Start coding in CLU..."></textarea>
+    </div>
+</div>
+            <!-- Output Section -->
+            <div class="output-section">
+                <div class="output-header">
+                    <div class="output-title">
+                        <i class="fas fa-terminal"></i>
+                        Output
+                    </div>
+                    <div class="execution-status" id="executionStatus">Ready</div>
+                </div>
+                <div class="output-content" id="outputContent">Welcome to CLU IDE - Modern Development Environment
+Click "Run" to execute your CLU code on the server.</div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div>
+                    <span id="cursorPosition">Line 1, Column 1</span>
+                    <span style="margin: 0 8px;">|</span>
+                    <span id="variableCount">Variables: 0</span>
+                </div>
+                <div>
+                    <span>CLU Language</span>
+                    <span style="margin: 0 8px;">|</span>
+                    <span id="serverStatus">Server: <span id="serverIndicator">Checking...</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CLU IDE - Apple-Inspired Edition
+        let currentFile = 'main.clu';
+        let files = {};
+        let variables = {};
+        let isConnected = false;
+
+        // Initialize files
+        function initFiles() {
+            const editor = document.getElementById('codeEditor');
+            if (editor) {
+                files['main.clu'] = editor.value;
+            }
+        }
+
+        // CLU Keywords for syntax highlighting
+        const cluKeywords = {
+            control: ['function', 'if', 'otherwise', 'end', 'repeat', 'foreach'],
+            logic: ["greater", "less", "equal", "greater_equal", "less_equal", "not_equal",
+              "and", "or", "not", "true", "false"],
+            math: ['add', 'subtract', 'multiply', 'divide'],
+            core: ['var', 'is', 'output', 'of', 'in'],
+            builtin: ["sum", "max", "min", "len", "sorted", "reversed", "average",
+               "first", "last", "str", "int", "float", "bool", "type", "empty", "contains", "all", "any", "is_bool"]
+        };
+
+        // Example programs
+        const examples = {
+            basic: `# Basic CLU Syntax
+var name is 'Student'
+var age is 20
+var university is 'University of Glasgow'
+
+output 'Hello, my name is ' + name
+output 'I am ' + str of age + ' years old'
+output 'I study at ' + university`,
+
+            lists: `# Lists and Functions
+var numbers is 1,2,3,4,5,6,7,8,9,10
+var fruits is 'apple','banana','cherry','date'
+
+output 'Numbers: ' + str of numbers
+output 'Sum: ' + str of sum of numbers
+output 'Average: ' + str of average of numbers
+output 'First fruit: ' + first of fruits
+
+function analyze_data -> data
+    output 'Analyzing ' + str of len of data + ' items'
+    output 'Max: ' + str of max of data
+    output 'Min: ' + str of min of data
+end
+
+analyze_data numbers`,
+
+            loops: `# Control Flow
+var counter is 1
+
+# Count to 5
+repeat counter less_equal 5
+    output 'Count: ' + str of counter
+    var counter is counter add 1
+end
+
+# Process list
+var items is 10,25,5,30,15
+foreach item in items
+    if item greater 20
+        output str of item + ' is large'
+    otherwise
+        output str of item + ' is small'
+    end
+end`,
+
+            advanced: `# Advanced CLU Features
+var data is 'hello',42,'world',100,'CLU',3.14
+
+output 'Processing mixed data types:'
+foreach item in data
+    var item_type is type of item
+    output 'Item: ' + str of item + ' (type: ' + item_type + ')'
+end
+
+# Mathematical operations
+var numbers is 1,2,3,4,5,6,7,8,9,10
+output '\\nStatistics:'
+output 'Sum: ' + str of sum of numbers
+output 'Average: ' + str of average of numbers
+output 'Maximum: ' + str of max of numbers
+output 'Minimum: ' + str of min of numbers
+
+# String operations
+var text is 'CLU Programming Language'
+output '\\nString analysis:'
+output 'Text: ' + text
+output 'Length: ' + str of len of text`
+        };
+
+        // Check server connection
+        async function checkConnection() {
+            try {
+                const response = await fetch('/api/health', {
+                    method: 'GET',
+                    timeout: 5000
+                });
+
+                if (response.ok) {
+                    isConnected = true;
+                    updateConnectionStatus(true);
+                } else {
+                    throw new Error('Server responded with error');
+                }
+            } catch (error) {
+                isConnected = false;
+                updateConnectionStatus(false);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            const serverIndicator = document.getElementById('serverIndicator');
+            const runBtn = document.getElementById('runBtn');
+
+            if (connected) {
+                status.className = 'connection-status connected';
+                status.innerHTML = '<i class="fas fa-check"></i><span>Connected</span>';
+                serverIndicator.textContent = 'Online';
+                serverIndicator.style.color = '#34c759';
+                runBtn.disabled = false;
+            } else {
+                status.className = 'connection-status disconnected';
+                status.innerHTML = '<i class="fas fa-times"></i><span>Offline</span>';
+                serverIndicator.textContent = 'Offline';
+                serverIndicator.style.color = '#ff3b30';
+                runBtn.disabled = true;
+            }
+        }
+        const keywordMap = {};
+        for (const category in cluKeywords) {
+            cluKeywords[category].forEach(word => {
+                keywordMap[word] = category;
+            });
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        function applySyntaxHighlighting() {
+            const editor = document.getElementById('codeEditor');
+            const highlight = document.getElementById('syntaxHighlight');
+
+            if (!editor || !highlight) return;
+
+            const code = editor.value;
+            const highlighted = highlightCLUCode(code);
+            highlight.innerHTML = highlighted;
+
+            // Sync scroll
+            highlight.scrollTop = editor.scrollTop;
+            highlight.scrollLeft = editor.scrollLeft;
+            validateSyntax();
+        }
+
+        function highlightCLUCode(code) {
+            // STEP 1: Escape HTML to prevent injection
+            let result = code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            // STEP 2: Apply highlighting (order matters!)
+            result = result
+                // 1. Comments first (highest priority)
+                .replace(/(#.*$)/gm, '<span class="hl-comment">$1</span>')
+
+                // 2. Strings (avoid conflicts with HTML)
+                .replace(/('[^']*')/g, '<span class="hl-string">$1</span>')
+
+                // 3. Numbers
+                .replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="hl-number">$1</span>')
+
+                // 4. Built-in functions (before keywords)
+                .replace(/\b(str|sum|len|max|min|average|first|last|int|float|type|empty|contains)\b/g, '<span class="hl-builtin">$1</span>')
+
+                // 5. Keywords
+                .replace(/\b(var|is|output|if|otherwise|end|function|repeat|foreach|in|of)\b/g, '<span class="hl-keyword">$1</span>')
+
+                // 6. Variables after var (complex but safe)
+                .replace(/(<span class="hl-keyword">var<\/span>)\s+(\w+)/g, '$1 <span class="hl-variable">$2</span>');
+
+            return result;
+        }
+
+
+        // Initialize editor - FIXED LINE NUMBERS
+        function initEditor() {
+            const editor = document.getElementById('codeEditor');
+            const lineNumbers = document.getElementById('lineNumbers');
+
+            if (!editor || !lineNumbers) return;
+
+            function updateLineNumbers() {
+                const lines = editor.value.split('\n').length;
+                let numbersArray = [];
+                for (let i = 1; i <= lines; i++) {
+                    numbersArray.push(i.toString());
+                }
+                lineNumbers.textContent = numbersArray.join('\n');
+
+                // Sync scroll position
+                lineNumbers.scrollTop = editor.scrollTop;
+            }
+
+            function updateCursorPosition() {
+                const pos = editor.selectionStart;
+                const textBefore = editor.value.substring(0, pos);
+                const lines = textBefore.split('\n');
+                const line = lines.length;
+                const column = lines[lines.length - 1].length + 1;
+                document.getElementById('cursorPosition').textContent = `Line ${line}, Column ${column}`;
+            }
+
+            // Event listeners
+            editor.addEventListener('input', () => {
+                updateLineNumbers();
+                updateCursorPosition();
+                files[currentFile] = editor.value;
+                validateSyntax();
+                applySyntaxHighlighting();
+
+            });
+
+            editor.addEventListener('scroll', () => {
+                updateLineNumbers();
+                applySyntaxHighlighting();
+                const highlight = document.getElementById('syntaxHighlight');
+                if (highlight) {
+                    highlight.scrollTop = editor.scrollTop;
+                    highlight.scrollLeft = editor.scrollLeft;
+                }
+            });
+
+            editor.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 4;
+                    updateLineNumbers();
+                }
+            });
+
+            editor.addEventListener('click', updateCursorPosition);
+            editor.addEventListener('keyup', updateCursorPosition);
+
+            // Initial setup
+            updateLineNumbers();
+            updateCursorPosition();
+            applySyntaxHighlighting();
+        }
+
+        // Backend integration
+        async function runCode() {
+            if (!isConnected) {
+                showOutput('Error: Not connected to CLU server.', 'error');
+                return;
+            }
+
+            const code = document.getElementById('codeEditor').value.trim();
+            if (!code) {
+                showOutput('Error: No code to execute.', 'error');
+                return;
+            }
+
+            const status = document.getElementById('executionStatus');
+            const runBtn = document.getElementById('runBtn');
+
+            status.innerHTML = '<span class="loading"></span> Executing...';
+            runBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showOutput(result.output, 'success');
+                    variables = result.variables || {};
+                    updateVariableDisplay();
+                    status.textContent = 'Execution completed';
+                } else {
+                    showOutput(`CLU Error: ${result.error}`, 'error');
+                    status.textContent = 'Execution failed';
+                }
+
+            } catch (error) {
+                showOutput(`Connection Error: ${error.message}`, 'error');
+                status.textContent = 'Connection failed';
+                isConnected = false;
+                updateConnectionStatus(false);
+            } finally {
+                runBtn.disabled = !isConnected;
+            }
+        }
+
+        async function validateSyntax() {
+            if (!isConnected) return;
+
+            const code = document.getElementById('codeEditor').value.trim();
+            if (!code) return;
+
+            try {
+                const response = await fetch('/api/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code })
+                });
+
+                const result = await response.json();
+                updateSyntaxIndicator(result.valid, result.error);
+            } catch (error) {
+                console.log('Syntax validation failed:', error);
+            }
+        }
+
+        function updateSyntaxIndicator(isValid, error) {
+            const indicator = document.getElementById('syntaxIndicator');
+
+            if (isValid) {
+                indicator.className = 'syntax-indicator valid';
+                indicator.innerHTML = '<i class="fas fa-check"></i><span>Syntax OK</span>';
+            } else {
+                indicator.className = 'syntax-indicator invalid';
+                indicator.innerHTML = '<i class="fas fa-times"></i><span>Syntax Error</span>';
+                indicator.title = error || 'Unknown syntax error';
+            }
+        }
+
+        function showOutput(text, type = '') {
+            const outputContent = document.getElementById('outputContent');
+            outputContent.className = `output-content ${type}`;
+            outputContent.textContent = text;
+        }
+
+        function updateVariableDisplay() {
+            const variableList = document.getElementById('variableList');
+            const variableCount = document.getElementById('variableCount');
+
+            if (Object.keys(variables).length === 0) {
+                variableList.innerHTML = '<div style="color: #7d8590; text-align: center; padding: 20px; font-size: 12px;">No variables</div>';
+                variableCount.textContent = 'Variables: 0';
+                return;
+            }
+
+            variableList.innerHTML = '';
+            Object.entries(variables).forEach(([name, value]) => {
+                const varItem = document.createElement('div');
+                varItem.className = 'variable-item';
+
+                let displayValue = value;
+                let typeInfo = typeof value;
+
+                if (Array.isArray(value)) {
+                    typeInfo = 'list';
+                    if (value.length > 3) {
+                        displayValue = `[${value.slice(0, 3).join(', ')}, ...] (${value.length} items)`;
+                    } else {
+                        displayValue = `[${value.join(', ')}]`;
+                    }
+                } else if (typeof value === 'string') {
+                    displayValue = `"${value}"`;
+                } else {
+                    displayValue = String(value);
+                }
+
+                varItem.innerHTML = `
+                    <div class="variable-name">${name}</div>
+                    <div class="variable-details">
+                        <span>${typeInfo}</span>
+                        <span>${displayValue}</span>
+                    </div>
+                `;
+                variableList.appendChild(varItem);
+            });
+
+            variableCount.textContent = `Variables: ${Object.keys(variables).length}`;
+        }
+
+        // File management
+        function newFile() {
+            const fileName = prompt('Enter file name:', 'untitled.clu');
+            if (fileName && !files[fileName]) {
+                files[fileName] = '# New CLU file\n\n';
+                selectFile(fileName);
+                updateFileList();
+            }
+        }
+
+        function selectFile(fileName) {
+            if (files[fileName] !== undefined) {
+                const editor = document.getElementById('codeEditor');
+                if (editor) {
+                    files[currentFile] = editor.value;
+                }
+
+                currentFile = fileName;
+                editor.value = files[fileName];
+                document.getElementById('currentFileName').textContent = fileName;
+
+                const lineNumbers = document.getElementById('lineNumbers');
+                const lines = editor.value.split('\n').length;
+                let numbersArray = [];
+                for (let i = 1; i <= lines; i++) {
+                    numbersArray.push(i.toString());
+                }
+                lineNumbers.textContent = numbersArray.join('\n');
+
+                updateFileList();
+                validateSyntax();
+                applySyntaxHighlighting();
+            }
+        }
+
+        function closeFile(event, fileName) {
+            event.stopPropagation();
+            if (Object.keys(files).length > 1) {
+                delete files[fileName];
+
+                if (currentFile === fileName) {
+                    currentFile = Object.keys(files)[0];
+                    const editor = document.getElementById('codeEditor');
+                    editor.value = files[currentFile];
+                    document.getElementById('currentFileName').textContent = currentFile;
+
+                    const lineNumbers = document.getElementById('lineNumbers');
+                    const lines = editor.value.split('\n').length;
+                    let numbersArray = [];
+                    for (let i = 1; i <= lines; i++) {
+                        numbersArray.push(i.toString());
+                    }
+                    lineNumbers.textContent = numbersArray.join('\n');
+                }
+
+                updateFileList();
+            }
+        }
+
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = `
+                <div class="file-item new-file" onclick="newFile()">
+                    <span><i class="fas fa-plus"></i> New File</span>
+                </div>
+            `;
+
+            Object.keys(files).forEach(fileName => {
+                const fileItem = document.createElement('div');
+                fileItem.className = `file-item ${fileName === currentFile ? 'active' : ''}`;
+                fileItem.onclick = () => selectFile(fileName);
+                fileItem.innerHTML = `
+                    <span><i class="fas fa-file-code"></i> ${fileName}</span>
+                    ${Object.keys(files).length > 1 ? `<i class="fas fa-times" onclick="closeFile(event, '${fileName}')"></i>` : ''}
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function loadExample(type) {
+            if (examples[type]) {
+                const editor = document.getElementById('codeEditor');
+                editor.value = examples[type];
+                files[currentFile] = examples[type];
+
+                const lineNumbers = document.getElementById('lineNumbers');
+                const lines = editor.value.split('\n').length;
+                let numbers = '';
+                for (let i = 1; i <= lines; i++) {
+                    numbers += i;
+                    if (i < lines) numbers += '\n';
+                }
+                lineNumbers.textContent = numbers;
+
+                validateSyntax();
+                clearOutput();
+                applySyntaxHighlighting();
+            }
+        }
+
+        function clearOutput() {
+            const outputContent = document.getElementById('outputContent');
+            const status = document.getElementById('executionStatus');
+
+            outputContent.textContent = 'Output cleared. Click "Run" to execute your code.';
+            outputContent.className = 'output-content';
+            status.textContent = 'Ready';
+        }
+
+        function saveFile() {
+            const content = document.getElementById('codeEditor').value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFile;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Additional features
+        function formatCode() {
+            // Simple code formatting for CLU
+            const editor = document.getElementById('codeEditor');
+            let code = editor.value;
+
+            // Basic formatting rules
+            const lines = code.split('\n');
+            let formatted = [];
+            let indentLevel = 0;
+
+            for (let line of lines) {
+                const trimmed = line.trim();
+
+                // Decrease indent for end statements
+                if (trimmed === 'end' || trimmed === 'otherwise') {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                }
+
+                // Add current line with proper indentation
+                if (trimmed) {
+                    formatted.push('    '.repeat(indentLevel) + trimmed);
+                } else {
+                    formatted.push('');
+                }
+
+                // Increase indent for block statements
+                if (trimmed.startsWith('function ') ||
+                    trimmed.startsWith('if ') ||
+                    trimmed.startsWith('repeat ') ||
+                    trimmed.startsWith('foreach ') ||
+                    trimmed === 'otherwise') {
+                    indentLevel++;
+                }
+            }
+
+            editor.value = formatted.join('\n');
+            files[currentFile] = editor.value;
+            applySyntaxHighlighting();
+        }
+
+        function findInCode() {
+            const searchTerm = prompt('Search for:');
+            if (searchTerm) {
+                const editor = document.getElementById('codeEditor');
+                const code = editor.value.toLowerCase();
+                const term = searchTerm.toLowerCase();
+                const index = code.indexOf(term);
+
+                if (index !== -1) {
+                    editor.focus();
+                    editor.setSelectionRange(index, index + searchTerm.length);
+                } else {
+                    alert('Text not found');
+                }
+            }
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initFiles();
+            initEditor();
+            updateVariableDisplay();
+            updateFileList();
+            checkConnection();
+
+            // Check connection periodically
+            setInterval(checkConnection, 30000);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.metaKey || e.ctrlKey) {
+                switch (e.key) {
+                    case 's':
+                        e.preventDefault();
+                        saveFile();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        if (isConnected) runCode();
+                        break;
+                    case 't':
+                        e.preventDefault();
+                        newFile();
+                        break;
+                    case 'f':
+                        e.preventDefault();
+                        findInCode();
+                        break;
+                    case 'k':
+                        e.preventDefault();
+                        formatCode();
+                        break;
+                }
+            }
+
+            if (e.key === 'F5') {
+                e.preventDefault();
+                if (isConnected) runCode();
+            }
+        });
+
+        // Handle connection changes
+        window.addEventListener('online', checkConnection);
+        window.addEventListener('offline', () => updateConnectionStatus(false));
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+# CLU Example - Control Flow
+var x is 1
+
+# Count to 5
+repeat x less_equal 5
+    output 'Count: ' + str of x
+    var x is x add 1
+end
+
+# Check numbers
+var test_numbers is 1,5,10,15,20
+
+foreach num in test_numbers
+    if num greater 10
+        output str of num + ' is a big number'
+    otherwise
+        output str of num + ' is a small number'
+    end
+end
+
+# Function with conditionals
+function grade_score -> score
+    if score greater_equal 90
+        output 'Grade A - Excellent!'
+    otherwise
+        if score greater_equal 80
+            output 'Grade B - Good work!'
+        otherwise
+            if score greater_equal 70
+                output 'Grade C - Satisfactory'
+            otherwise
+                output 'Grade F - Needs improvement'
+            end
+        end
+    end
+end
+
+var scores is 95,85,75,65
+foreach score in scores
+    output 'Score ' + str of score + ':'
+    grade_score score
+end

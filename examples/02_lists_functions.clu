@@ -1,0 +1,18 @@
+# CLU Example - Lists and Functions
+var numbers is 1,5,10,15,20
+var fruits is 'apple','banana','cherry','date'
+
+output 'Numbers: ' + str of numbers
+output 'Sum of numbers: ' + str of sum of numbers
+output 'Average: ' + str of average of numbers
+output 'First fruit: ' + first of fruits
+output 'Number of fruits: ' + str of len of fruits
+
+function describe_list -> items
+    output 'This list has ' + str of len of items + ' items'
+    output 'First item: ' + str of first of items
+    output 'Last item: ' + str of last of items
+end
+
+describe_list numbers
+describe_list fruits
