@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/license-CLUED-green)
 ![Made with](https://img.shields.io/badge/made%20with-Python-blue)
 
-# CLU Language Documentation (v1.10)
+# CLU Language Documentation (v1.00)
 
 ---
 
@@ -258,4 +258,4 @@ output contains of 'hello', 'e'  # → True
 - **Author:** Connor Campagna
 - **GitHub:** https://github.com/connorcampagna/Clu
 - **License:** CLUED
-- **Status:** Beta (v0.1)
+- **Status:** Beta (v1.0)
