@@ -257,5 +257,5 @@ output contains of 'hello', 'e'  # → True
 
 - **Author:** Connor Campagna
 - **GitHub:** https://github.com/connorcampagna/Clu
-- **License:** MIT
+- **License:** CLUED
 - **Status:** Beta (v0.1)
